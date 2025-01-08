@@ -12,6 +12,7 @@ import errorHandlerMiddleware from "./middlewares/error-handler.js";
 const app = express();
 dotenv.config();
 
+// Middleware
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
@@ -21,28 +22,28 @@ app.use(express.json({ limit: "100mb" }));
 app.use(helmet());
 app.use(cors());
 
-const PORT = process.env.PORT || 5002;
-
+// Routes
 app.get("/", (req, res) => {
-  res.send("Welcome!");
+  res.send("Welcome to the API!");
 });
-
-// routes
 app.use("/api/user", UserRoute);
 app.use("/api/product", ProductRoute);
 app.use("/api/Milk", RecRoutes);
 
+// Error handling middleware
 app.use(errorHandlerMiddleware);
 
+// MongoDB connection and server start
 const startServer = async () => {
   try {
     await connectDb(process.env.MONGO_DB_URI);
 
-    app.listen(PORT, () => {
-      console.log(`Server running on Port ${PORT}...`);
+    app.listen(process.env.PORT || 5002, () => {
+      console.log(`Server running on Port ${process.env.PORT || 5002}...`);
     });
   } catch (error) {
     console.log(error);
   }
 };
+
 startServer();

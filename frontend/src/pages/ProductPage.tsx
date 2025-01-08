@@ -208,7 +208,7 @@ const ProductPage = () => {
 
               <div className="border-b pt-3">
                 <h1 className="text-sm px-2 flex gap-2">
-                  GREEN RE-USE <h1 className="text-green-500">Express</h1>
+                  Baraka dairy <h1 className="text-green-500">Express</h1>
                 </h1>
                 <span className="text-xs px-2">
                   Express delivery in main cities.

@@ -1,8 +1,8 @@
 "use client";
 
-import { Badge, Button, Card } from "flowbite-react";
+import { Badge, Button, } from "flowbite-react";
 import Search from "../components/search.tsx";
-import takataka from "../assets/takataka.jpg";
+
 
 const HomeMain = () => {
   return (
@@ -31,6 +31,7 @@ const HomeMain = () => {
           <Button>Visit the Store</Button>
         </div>
       </div>
+      <Search />
 
       <div className="bg-green-100 shadow mt-5 p-7 flex flex-col gap-3">
         <h5 className="text-2xl text-center font-bold tracking-tight text-green-600 capitalize dark:text-white">

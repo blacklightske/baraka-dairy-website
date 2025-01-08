@@ -1,70 +1,58 @@
 import mongoose from "mongoose";
-import validator from "validator";
 import bcrypt from "bcrypt";
-import Jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
+// Define User Schema
 const UserSchema = new mongoose.Schema(
   {
-    fullName: {
+    firstName: {
       type: String,
-      trim: true,
+      required: [true, "Please provide your first name"],
+    },
+    secondName: {
+      type: String,
+      required: [true, "Please provide your second name"],
+    },
+    nationalId: {
+      type: String,
+      required: [true, "Please provide a national ID"],
+      unique: true,
     },
     email: {
       type: String,
       required: [true, "Please provide an email"],
-      validate: {
-        validator: validator.isEmail,
-        message: "Please provide a valid email",
-      },
       unique: true,
     },
     password: {
       type: String,
       required: [true, "Please provide a password"],
-      select: false,
-    },
-    phoneNumber: {
-      type: String,
-      maxlength: 20,
-      trim: true,
-      default: "+2547",
-    },
-    userId: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
-    profileImage: {
-      type: Object,
-      default: {
-        imageUrl:
-          "https://res.cloudinary.com/df23q280l/image/upload/f_auto,q_auto/w2iewy0nbrglimrsqpyd",
-        id: "w2iewy0nbrglimrsqpyd",
-      },
-    },
-    isAdmin: {
-      type: Boolean,
-      default: false,
+      select: false, // Don't return password by default
     },
   },
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+// Hash the password before saving to database
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
-UserSchema.methods.createJWT = function () {
-  return Jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
-  });
+// Method to compare password during login
+UserSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-  const passwordMatch = await bcrypt.compare(candidatePassword, this.password);
-  return passwordMatch;
+// Method to create JWT
+UserSchema.methods.createJWT = function () {
+  return jwt.sign(
+    { userId: this._id, email: this.email },
+    process.env.JWT_SECRET,
+    { expiresIn: "30d" }
+  );
 };
 
 export default mongoose.model("User", UserSchema);

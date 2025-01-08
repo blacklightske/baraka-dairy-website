@@ -1,45 +1,35 @@
-import { StatusCodes } from "http-status-codes";
-import User from "../models/User.js";
-import AttachCookie from "../utils/AttachCookie.js";
+import User from "../models/User.js"; // Import User model
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
+// Login User controller
 const LoginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    if (!email || !password) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Please provide all values" });
-      return;
-    }
-
+    // Check if the user exists by email
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "User does not exist" });
-      return;
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
-    const isPasswordCorrect = await user.comparePassword(password);
+    // Compare the provided password with the stored hashed password
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      res.status(401).json({ message: "Invalid Credentials" });
-      return;
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
+    // Generate a JWT token
     const token = user.createJWT();
-    AttachCookie({ res, token });
 
-    user.password = undefined;
+    // Return the token as part of the response
+    res.status(200).json({ token });
 
-    res.status(StatusCodes.OK).json({ user, token });
   } catch (error) {
-    console.log(error);
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: "An error occurred while registering" });
+    console.error(error);
+    res.status(500).json({ message: "Server error during login." });
   }
 };
 

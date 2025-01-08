@@ -6,7 +6,7 @@ export const getFarmersService = createAsyncThunk(
   "farmers/get",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await API.get("farmers"); // Replace with the correct API endpoint for fetching farmers
+      const res = await API.get("user"); // Replace with the correct API endpoint for fetching farmers
       return res.data; // Ensure the data structure matches the expected response
     } catch (error) {
       console.log(error);

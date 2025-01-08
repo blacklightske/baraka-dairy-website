@@ -35,13 +35,13 @@ const Search = () => {
         {/* User ID Input */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="userId" value="Farmer ID (User ID)" />
+            <Label htmlFor="userId" value="Farmer ID (nationalId)" />
           </div>
           <TextInput
-            id="userId"
+            id="nationalId"
             type="text"
             placeholder="Enter Farmer ID"
-            {...formik.getFieldProps("userId")}
+            {...formik.getFieldProps("nationalI")}
             color={formik.touched.userId && formik.errors.userId ? "failure" : undefined}
             helperText={formik.touched.userId && formik.errors.userId ? formik.errors.userId : ""}
           />
