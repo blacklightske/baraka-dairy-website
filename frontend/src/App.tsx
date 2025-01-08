@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./app/Store";
 import Home from "./pages/Home";
+import ProductPage from "./pages/ProductPage";
 import { ProtectedRoute, PublicRoute } from "./components/RouteGuards";
 import DefaultLayout from "./layout/DefaultLayout";
 import Cart from "./pages/Cart";
@@ -75,6 +76,8 @@ const App = () => (
           </ProtectedRoute>
         }
       />
+      <Route path="/product/:productId" element={<ProductPage />} />
+       
       <Route
         path="/market"
         element={
